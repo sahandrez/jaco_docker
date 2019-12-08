@@ -21,5 +21,4 @@ RUN /bin/bash -c "source ~/catkin_ws/devel/setup.bash"
 # Clone and make the kinova-ros package
 RUN cd ~/catkin_ws/src/ && \
     git clone https://github.com/Kinovarobotics/kinova-ros.git && \
-    /bin/bash -c '. /opt/ros/melodic/setup.bash; cd ~/catkin_ws; catkin_make' && \
-    /bin/bash -c "source ~/catkin_ws/devel/setup.bash"
+    /bin/bash -c '. /opt/ros/melodic/setup.bash; cd ~/catkin_ws; catkin_make'
