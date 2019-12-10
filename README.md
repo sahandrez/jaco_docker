@@ -17,7 +17,7 @@ git clone https://github.com/sahandrez/jaco_docker.git
 docker build --tag jaco_control .
 ```
 
-* To access the arm via USB copy the udev rule file `10-kinova-arm.rules` from `/udev` to 
+* To access the arm via USB copy the udev srule file `10-kinova-arm.rules` from `/udev` to 
 `/etc/udev/rules.d` and then connect the robot to your machine: 
 ```
 # From /jaco_docker
@@ -30,7 +30,7 @@ docker run -it --name jaco_robot --privileged -v /dev/bus/usb:/dev/bus/usb  jaco
 ```
 
 * You can now run the robot from inside the Docker regularly as if you had ROS installed on your 
-machine. In order to connect to the running container using the following command:
+machine. In order to connect to the running container use the following command:
 ```
 docker exec -it jaco_robot /bin/bash
 ```
