@@ -2,6 +2,17 @@
 
 FROM ros:melodic
 
+
+# Replace 1000 with your user / group id
+RUN export uid=4500 gid=1800 && \
+    mkdir -p /home/developer && \
+    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:${uid}:" >> /etc/group && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer && \
+    chown ${uid}:${gid} -R /home/developer
+
+
 RUN apt-get update && apt-get install -y \
     python \
     python-tk \
@@ -16,7 +27,8 @@ RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libosmesa6 \
     libblas-dev \
-    liblapack-dev
+    liblapack-dev \
+    net-tools 
 
 RUN apt-get install -y \
     ros-melodic-moveit \
@@ -27,7 +39,6 @@ RUN apt-get install -y \
     ros-melodic-ros-controllers \
     ros-melodic-robot-state-publisher
 
-RUN pip install numpy
 
 # Source ROS setup.bash
 RUN /bin/bash -c "source /opt/ros/melodic/setup.bash" 
@@ -42,23 +53,18 @@ RUN cd ~/catkin_ws/src/ \
     && git clone https://github.com/Kinovarobotics/kinova-ros.git \
     && /bin/bash -c '. /opt/ros/melodic/setup.bash; cd ~/catkin_ws; catkin_make'
 
-# Install Mujoco
-RUN mkdir -p ~/.mujoco \
-    && wget https://www.roboti.us/download/mujoco200_linux.zip -O mujoco200_linux.zip \
-    && unzip mujoco200_linux.zip -d ~/.mujoco \
-    && rm mujoco200_linux.zip
-COPY ./mjkey.txt /root/.mujoco/
-COPY ./mjkey.txt /root/.mujoco/mujoco200_linux/bin/
+# Clone and make the ros_interface package
+RUN cd ~/catkin_ws/src/ \
+    && git clone https://github.com/johannah/ros_interface.git \
+    && /bin/bash -c '. /opt/ros/melodic/setup.bash; cd ~/catkin_ws; catkin_make'
 
-# Clone and install Deepmind Control Suite
-RUN mkdir -p ~/workspace \
-    && cd ~/workspace \
-    && git clone https://github.com/sahandrez/dm_control.git --branch jaco_arm \
-    && pip install dm_control/
-
-# Clone and make the robot_learning package
 
 
 RUN pip install scipy
+RUN pip install ipython
+RUN pip install pid
+RUN pip install numpy
+
+
 
 WORKDIR /root/catkin_ws/src
